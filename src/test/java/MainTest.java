@@ -7,7 +7,7 @@ class MainTest {
 
     @Test
     void main() throws IOException {
-        System.out.println("salamaaaaaammmmmmmmmmmmmmmmmmmmmmm");
+        java.lang.System.out.println("salamaaaaaammmmmmmmmmmmmmmmmmmmmmm");
         String[] args = null;
 //        Main.main(null);
 //        User user = new User(null);

@@ -3,6 +3,6 @@ import org.junit.jupiter.api.Test;
 public class Main {
     @Test
     public void test(){
-        System.out.println("testing ... ");
+        java.lang.System.out.println("testing ... ");
     }
 }

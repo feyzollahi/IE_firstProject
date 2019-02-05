@@ -8,15 +8,15 @@ import java.net.URL;
 public class Main {
     public static void main(String[] args) throws IOException {
         URL url = Main.class.getResource("UserJson.txt");
-        System.out.println(url.getPath());
+        java.lang.System.out.println(url.getPath());
         File f = new File(url.getPath());
-        System.out.println("Working Directory = " +
-                System.getProperty("user.dir"));
+        java.lang.System.out.println("Working Directory = " +
+                java.lang.System.getProperty("user.dir"));
         BufferedReader b = null;
         try {
             b = new BufferedReader(new FileReader(f));
         } catch (FileNotFoundException e) {
-            System.out.println("s");
+            java.lang.System.out.println("s");
             e.printStackTrace();
         }
         String line = b.readLine();
@@ -25,8 +25,8 @@ public class Main {
         try {
             jsonObject = (JSONObject) parser.parse(line);
         } catch (ParseException e) {
-            System.out.println("json cannot be parsed");
-            System.out.println(line);
+            java.lang.System.out.println("json cannot be parsed");
+            java.lang.System.out.println(line);
             e.printStackTrace();
         }
         User user1 = new User(jsonObject);

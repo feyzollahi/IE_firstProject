@@ -10,6 +10,15 @@ public class User {
     }
     private ArrayList<Skill> skills;
     private String userName;
+    private int userOffer;
+
+    public int getUserOffer() {
+        return userOffer;
+    }
+
+    public void setUserOffer(int userOffer) {
+        this.userOffer = userOffer;
+    }
 
     public ArrayList<Skill> getSkills() {
         return skills;
