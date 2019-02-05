@@ -1,1 +1,2 @@
-‪{"username":"user1","skills":[{"name":"HTML","points":10},{"name":"CSS","points":20‬‬)}
+register {"username":"user1", "skills":[{"name":"HTML", "points":10}, {"name":"CSS", "points":20}]}
+addProject {"title": "p1", "skills":[{"name":"HTML", "points":5}]}
