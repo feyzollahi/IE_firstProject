@@ -1,6 +1,14 @@
-public class Skill {
-    private String name;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
+public class Skill {
+    public Skill (JSONObject data){
+        this.name = data.get("name").toString();
+        Main.print(this.name);
+        this.points = (Long)data.get("points");
+    }
+    private String name;
+    private Long points;
     public String getName() {
         return name;
     }
@@ -9,13 +17,12 @@ public class Skill {
         this.name = name;
     }
 
-    public int getPoints() {
+    public Long getPoints() {
         return points;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(Long points) {
         this.points = points;
     }
 
-    private int points;
 }

@@ -4,9 +4,19 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 
 public class User {
+    public static void print(Object object){java.lang.System.out.println(object);}
     public User(JSONObject userInfo){
-        String userName = userInfo.get("username").toString();
-        JSONArray skills = (JSONArray) userInfo.get("skills");
+        this.userName = userInfo.get("username").toString();
+        this.skills = new ArrayList<Skill>();
+        JSONArray array_skill = (JSONArray) userInfo.get("skills");
+        try{
+            for (int i = 0 ; i < array_skill.size();i++){
+                this.skills.add(new Skill((JSONObject)array_skill.get(i)));
+            }
+        }catch (NullPointerException e){
+            print("dfdsfdsf\n");
+            print(e);
+        }
     }
     private ArrayList<Skill> skills;
     private String userName;
