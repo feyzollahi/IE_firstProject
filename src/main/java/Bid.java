@@ -1,11 +1,13 @@
+import org.json.simple.JSONObject;
+
 public class Bid {
     private User biddingUser;
     private Project project;
-
-    public Bid(User biddingUser, Project project, int bidAmount) {
-        this.biddingUser = biddingUser;
-        this.project = project;
-        this.bidAmount = bidAmount;
+    private Long bidAmount;
+    public Bid(JSONObject bid_data) {
+        this.biddingUser = getUser(bid_data.get("biddingUser").toString());
+        this.project = getProject(bid_data.get("projectTitle").toString());
+        this.bidAmount = (Long) bid_data.get("bidAmount");
     }
 
     public User getBiddingUser() {
@@ -24,13 +26,12 @@ public class Bid {
         this.project = project;
     }
 
-    public int getBidAmount() {
+    public Long getBidAmount() {
         return bidAmount;
     }
 
-    public void setBidAmount(int bidAmount) {
+    public void setBidAmount(Long bidAmount) {
         this.bidAmount = bidAmount;
     }
 
-    private int bidAmount;
 }

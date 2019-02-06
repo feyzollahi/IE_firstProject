@@ -4,7 +4,6 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 
 public class User {
-    public static void print(Object object){java.lang.System.out.println(object);}
     public User(JSONObject userInfo){
         this.userName = userInfo.get("username").toString();
         this.skills = new ArrayList<Skill>();
@@ -14,8 +13,8 @@ public class User {
                 this.skills.add(new Skill((JSONObject)array_skill.get(i)));
             }
         }catch (NullPointerException e){
-            print("dfdsfdsf\n");
-            print(e);
+            Main.print("dfdsfdsf\n");
+            Main.print(e);
         }
     }
     private ArrayList<Skill> skills;
