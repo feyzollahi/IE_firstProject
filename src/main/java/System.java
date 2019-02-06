@@ -1,19 +1,30 @@
 
+import Exceptions.UserNotFound;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class System {
     public static void print(Object object){java.lang.System.out.println(object);}
-    public System (ArrayList<String> commands2) {
-        users  = new ArrayList<User>();
-        commands = commands2;
+    private static System singleInstance = null;
+    private System () {
+//        users  = new ArrayList<User>();
+        users = new HashMap<String, User>();
+        projects = new HashMap<String, Project>();
+        bids = new ArrayList<Bid>();
     }
-    private ArrayList<User> users;
-    private ArrayList<Project> projects;
+    public static System getSystem(){
+        if(singleInstance == null)
+            singleInstance = new System();
+        return  singleInstance;
+    }
+    private HashMap users;
+    private HashMap projects;
     private ArrayList<Bid> bids;
     private ArrayList<String> commands;
     public ArrayList<String> getCommands() {
@@ -37,7 +48,8 @@ public class System {
                 print(pe);
             }
             if (commandOrder.equals("register")) {
-                users.add(new User (jsonObject));
+                User user = new User(jsonObject);
+                users.put(user.getUserName(), user);
 //                registerCommand(jsonInfo);
             } else if (commandOrder.equals("addProject")) {
 //                addProjectCommand(jsonInfo);
@@ -66,19 +78,22 @@ public class System {
     }
 
     public ArrayList<User> getUsers() {
-        return users;
+        return new ArrayList<User>(users.values());
     }
 
     public void setUsers(ArrayList<User> users) {
-        this.users = users;
+
+        for(User user:users){
+            this.users.put(user.getUserName(), user);
+        }
     }
 
     public void addProject(Project project) {
-        this.projects.add(project);
+        this.projects.put(project.getTitle(),project);
     }
 
     public void addUser(User user) {
-        this.users.add(user);
+        this.users.put(user.getUserName(), user);
     }
 
     public void addBid(Bid bid) {
@@ -86,11 +101,25 @@ public class System {
     }
 
     public ArrayList<Project> getProjects() {
-        return projects;
+        return new ArrayList<Project>(projects.values());
     }
+    public static User getUser(String userName) throws UserNotFound {
+        System system = System.getSystem();
+        Object user =  system.users.get(userName);
+        if(user == null){
+            throw new UserNotFound();
+        }
+        return (User) user;
+    }
+    public static Project getProject(String ProjectTitle){
+        System system = System.getSystem();
 
-    public void setProjects(ArrayList<Project> projects) {
-        this.projects = projects;
+        Object project = project.
+    }
+    public void setProjects(ArrayList<Project> projects)
+    {
+        for(Project project:projects)
+            this.projects.put(project.getTitle(), project);
     }
 
     public ArrayList<Bid> getBids() {
