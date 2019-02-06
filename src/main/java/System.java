@@ -1,13 +1,11 @@
 
-import Exceptions.UserNotFound;
-import org.json.simple.JSONArray;
+import Exceptions.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class System {
     public static void print(Object object){java.lang.System.out.println(object);}
@@ -16,7 +14,7 @@ public class System {
 //        users  = new ArrayList<User>();
         users = new HashMap<String, User>();
         projects = new HashMap<String, Project>();
-        bids = new ArrayList<Bid>();
+        bids = new HashMap<String, Bid>();
     }
     public static System getSystem(){
         if(singleInstance == null)
@@ -25,7 +23,7 @@ public class System {
     }
     private HashMap users;
     private HashMap projects;
-    private ArrayList<Bid> bids;
+    private HashMap bids;
     private ArrayList<String> commands;
     public ArrayList<String> getCommands() {
         return commands;
@@ -35,7 +33,7 @@ public class System {
         this.commands = commands;
     }
 
-    public void doCommands() {
+    public void doCommands() throws UserExist, ProjectExist, UserNotFound, ProjectNotFound, BidExist {
         for (String command : commands) {
             String commandOrder = command.split(" ", 2)[0];
             String jsonInfo = command.split(" ", 2)[1];
@@ -48,39 +46,45 @@ public class System {
                 print(pe);
             }
             if (commandOrder.equals("register")) {
-                User user = new User(jsonObject);
-                users.put(user.getUserName(), user);
-//                registerCommand(jsonInfo);
+                registerCommand(jsonObject);
             } else if (commandOrder.equals("addProject")) {
-//                addProjectCommand(jsonInfo);
+                addProjectCommand(jsonObject);
             } else if (commandOrder.equals("bid")) {
-//            bidCommand(jsonInfo);
+                bidCommand(jsonObject);
             } else if (commandOrder.equals("auction")) {
-//            auctionCommand(jsonInfo);
+                auctionCommand(jsonObject);
             }
         }
     }
 
-    private static void registerCommand(String jsonInfo){
-
-        JSONParser parser = new JSONParser();
-        try{
-            JSONObject jsonObject = (JSONObject) parser.parse(jsonInfo);
-            JSONArray jarr = new JSONArray();
-//            jarr = (JSONArray) jsonInfo ;
-            print("The 2nd element of array");
-            print(jsonObject.get("username"));
-//            print(array.get(1));
-        }catch(ParseException pe) {
-            print("position: " + pe.getPosition());
-            print(pe);
+    private void addProjectCommand(JSONObject jsonObject) throws ProjectExist {
+        Object project = projects.get(jsonObject.get("title"));
+        if(project != null){
+            throw new ProjectExist();
         }
+        projects.put(jsonObject.get("title"), new Project(jsonObject));
+
     }
 
+    private void registerCommand(JSONObject jsonObject) throws UserExist {
+        Object user = users.get(jsonObject.get("username"));
+        if(user != null){
+            throw new UserExist();
+        }
+        users.put(jsonObject.get("username"), new User(jsonObject));
+    }
+
+    private void bidCommand(JSONObject jsonObject) throws UserNotFound, ProjectNotFound, BidExist {
+
+        Bid bid = new Bid(jsonObject);
+        this.addBid(bid);
+    }
     public ArrayList<User> getUsers() {
         return new ArrayList<User>(users.values());
     }
+    private void auctionCommand(JSONObject jsonObject){
 
+    }
     public void setUsers(ArrayList<User> users) {
 
         for(User user:users){
@@ -88,16 +92,28 @@ public class System {
         }
     }
 
-    public void addProject(Project project) {
+    private void addProject(Project project) throws ProjectExist {
+        Object project1 = this.projects.get(project.getTitle());
+        if(project1 != null){
+            throw new ProjectExist();
+        }
         this.projects.put(project.getTitle(),project);
     }
 
-    public void addUser(User user) {
+    private void addUser(User user) throws UserExist {
+        Object user1 = this.users.get(user.getUserName());
+        if(user1 != null){
+            throw new UserExist();
+        }
         this.users.put(user.getUserName(), user);
     }
 
-    public void addBid(Bid bid) {
-        this.bids.add(bid);
+    private void addBid(Bid bid) throws BidExist {
+        Object bid1 = this.bids.get(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle());
+        if(bid1 != null){
+            throw new BidExist();
+        }
+        this.bids.put(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle(), bid);
     }
 
     public ArrayList<Project> getProjects() {
@@ -111,10 +127,14 @@ public class System {
         }
         return (User) user;
     }
-    public static Project getProject(String ProjectTitle){
+    public static Project getProject(String projectTitle) throws ProjectNotFound {
         System system = System.getSystem();
 
-        Object project = project.
+        Object project = system.projects.get(projectTitle);
+        if(project == null){
+            throw new ProjectNotFound();
+        }
+        return (Project) project;
     }
     public void setProjects(ArrayList<Project> projects)
     {
@@ -123,10 +143,23 @@ public class System {
     }
 
     public ArrayList<Bid> getBids() {
-        return bids;
+        return new ArrayList<Bid>(bids.values());
     }
 
     public void setBids(ArrayList<Bid> bids) {
-        this.bids = bids;
+
+        for(Bid bid:bids)
+            this.bids.put(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle(), bid);
     }
+
+    public Bid getBid(String key) throws BidNotFound {
+        System system = System.getSystem();
+
+        Object bid = system.bids.get(key);
+        if(bid == null){
+            throw new BidNotFound();
+        }
+        return (Bid) bid;
+    }
+
 }

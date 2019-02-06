@@ -1,12 +1,15 @@
+import Exceptions.ProjectNotFound;
+import Exceptions.UserNotFound;
 import org.json.simple.JSONObject;
 
 public class Bid {
     private User biddingUser;
     private Project project;
     private Long bidAmount;
-    public Bid(JSONObject bid_data) {
-        this.biddingUser = getUser(bid_data.get("biddingUser").toString());
-        this.project = getProject(bid_data.get("projectTitle").toString());
+    public Bid(JSONObject bid_data) throws ProjectNotFound, UserNotFound {
+        System system = System.getSystem();
+        this.biddingUser = system.getUser(bid_data.get("biddingUser").toString());
+        this.project = system.getProject(bid_data.get("projectTitle").toString());
         this.bidAmount = (Long) bid_data.get("bidAmount");
     }
 
