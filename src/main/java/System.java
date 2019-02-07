@@ -33,7 +33,7 @@ public class System {
         this.commands = commands;
     }
 
-    public void doCommands() throws UserExist, ProjectExist, UserNotFound, ProjectNotFound, BidExist {
+    public void doCommands() throws UserExist, ProjectExist, UserNotFound, ProjectNotFound {
         for (String command : commands) {
             String commandOrder = command.split(" ", 2)[0];
             String jsonInfo = command.split(" ", 2)[1];
@@ -50,9 +50,14 @@ public class System {
             } else if (commandOrder.equals("addProject")) {
                 addProjectCommand(jsonObject);
             } else if (commandOrder.equals("bid")) {
-                bidCommand(jsonObject);
+                try {
+                    bidCommand(jsonObject);
+                } catch (BidNotValid bidNotValid) {
+
+                }
             } else if (commandOrder.equals("auction")) {
-                auctionCommand(jsonObject);
+                User winnerUser = auctionCommand(jsonObject);
+                Main.print(winnerUser.getUserName());
             }
         }
     }
@@ -74,16 +79,38 @@ public class System {
         users.put(jsonObject.get("username"), new User(jsonObject));
     }
 
-    private void bidCommand(JSONObject jsonObject) throws UserNotFound, ProjectNotFound, BidExist {
+    private void bidCommand(JSONObject jsonObject) throws UserNotFound, ProjectNotFound, BidNotValid {
 
         Bid bid = new Bid(jsonObject);
-        this.addBid(bid);
+        if(bid.isValidBid()) {
+            bid.getBiddingUser().setUserOffer(bid.getBiddingUser().getUserOffer() + 1);
+            bid.getProject().setJobOffer(bid.getProject().getJobOffer() + 1);
+            this.addBid(bid);
+        }
+        else{
+            throw new BidNotValid(bid.getProject().getTitle(), bid.getBiddingUser().getUserName(), bid.getBidAmount());
+        }
     }
     public ArrayList<User> getUsers() {
         return new ArrayList<User>(users.values());
     }
-    private void auctionCommand(JSONObject jsonObject){
-
+    private User auctionCommand(JSONObject jsonObject){
+        String projectTitle = jsonObject.get("projectTitle").toString();
+        ArrayList<Bid> projectBids = this.getBidsByProject(projectTitle);
+        int highestScore = Integer.MIN_VALUE;
+        User winnerUser = null;
+        for(Bid bid: projectBids){
+            int initScore = 0;
+            for(Skill skill: bid.getProject().getSkills()){
+                initScore += 10000 * Math.pow(bid.getBiddingUser().getSkill(skill.getName()).getPoints() - skill.getPoints(), 2) ;
+            }
+            initScore += (bid.getProject().getBudget() - bid.getBidAmount());
+            if(initScore > highestScore) {
+                highestScore = initScore;
+                winnerUser = bid.getBiddingUser();
+            }
+        }
+        return winnerUser;
     }
     public void setUsers(ArrayList<User> users) {
 
@@ -108,12 +135,10 @@ public class System {
         this.users.put(user.getUserName(), user);
     }
 
-    private void addBid(Bid bid) throws BidExist {
-        Object bid1 = this.bids.get(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle());
-        if(bid1 != null){
-            throw new BidExist();
-        }
-        this.bids.put(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle(), bid);
+    private void addBid(Bid bid) {
+
+        this.bids.put(bid.getBiddingUser().getUserName() + "_#_" + bid.getProject().getTitle(), bid);
+
     }
 
     public ArrayList<Project> getProjects() {
@@ -149,7 +174,7 @@ public class System {
     public void setBids(ArrayList<Bid> bids) {
 
         for(Bid bid:bids)
-            this.bids.put(bid.getBiddingUser().getUserName() + "_" + bid.getProject().getTitle(), bid);
+            this.bids.put(bid.getBiddingUser().getUserName() + "_#_" + bid.getProject().getTitle(), bid);
     }
 
     public Bid getBid(String key) throws BidNotFound {
@@ -160,6 +185,16 @@ public class System {
             throw new BidNotFound();
         }
         return (Bid) bid;
+    }
+    public ArrayList<Bid> getBidsByProject(String projectTitle){
+        ArrayList<Bid> allBids = this.getBids();
+        ArrayList<Bid> selectedBids = new ArrayList<Bid>();
+        for(Bid bid: allBids){
+            if(bid.getProject().getTitle().equals(projectTitle)){
+                selectedBids.add(bid);
+            }
+        }
+        return selectedBids;
     }
 
 }

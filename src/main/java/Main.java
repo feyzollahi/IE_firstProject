@@ -1,3 +1,4 @@
+import Exceptions.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,20 +15,17 @@ public class Main {
     public static void print(Object object){
         java.lang.System.out.println(object);
     }
-    public static void main(String[] args) throws IOException {
-        URL url = Main.class.getResource("UserJson.txt");
-        print(url.getPath());
-//        String filename="UserJson.txt";
-//        String cwd = java.lang.System.getProperty("user.dir");
-//        print(cwd);
-//        Path pathToFile = Paths.get(filename);
-//        print(pathToFile.toAbsolutePath());
-        ArrayList<String> commands = (ArrayList<String>) Files.readAllLines(Paths.get("src/main/resources/UserJson.txt"));
-        System system = new System(commands);
+    public static void main(String[] args) throws IOException, ProjectNotFound, ProjectExist, BidNotValid, UserNotFound, UserExist {
+//        URL url = Main.class.getResource("UserJson.txt");
+//        print(url.getPath());
+//        ArrayList<String> commands = (ArrayList<String>) Files.readAllLines(Paths.get("src/main/resources/UserJson.txt"));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(java.lang.System.in));
+        ArrayList<String> commands = new ArrayList<String>();
+        do {
+            commands.add(reader.readLine());
+        }while(!commands.get(commands.size() - 1).split(" ", 2)[0].equals("auction"));
+        System system = System.getSystem();
+        system.setCommands(commands);
         system.doCommands();
-//        Main.print(commands);
-//        for(String command:  commands){
-//            Main.doCommand(command);
-//        }
     }
 }

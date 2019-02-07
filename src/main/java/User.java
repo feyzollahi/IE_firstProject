@@ -2,22 +2,23 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class User {
     public User(JSONObject userInfo){
         this.userName = userInfo.get("username").toString();
-        this.skills = new ArrayList<Skill>();
+        this.skills = new HashMap<String, Skill>();
+        this.userOffer = 0;
         JSONArray array_skill = (JSONArray) userInfo.get("skills");
         try{
             for (int i = 0 ; i < array_skill.size();i++){
-                this.skills.add(new Skill((JSONObject)array_skill.get(i)));
+                this.skills.put((((JSONObject) array_skill.get(i)).get("name")).toString(),new Skill((JSONObject)array_skill.get(i)));
             }
         }catch (NullPointerException e){
-            Main.print("dfdsfdsf\n");
             Main.print(e);
         }
     }
-    private ArrayList<Skill> skills;
+    private HashMap<String, Skill> skills;
     private String userName;
     private int userOffer;
 
@@ -30,11 +31,15 @@ public class User {
     }
 
     public ArrayList<Skill> getSkills() {
-        return skills;
+        return new ArrayList<Skill>(skills.values());
     }
 
-    public void setSkills(ArrayList<Skill> skills) {
-        this.skills = skills;
+    public void addSkill(Skill skill){
+        this.skills.put(skill.getName(), skill);
+    }
+
+    public Skill getSkill(String skillName){
+        return this.skills.get(skillName);
     }
 
     public String getUserName() {

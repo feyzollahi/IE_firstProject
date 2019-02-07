@@ -4,7 +4,6 @@ import org.json.simple.JSONObject;
 public class Skill {
     public Skill (JSONObject data){
         this.name = data.get("name").toString();
-        Main.print(this.name);
         this.points = (Long)data.get("points");
     }
     private String name;
