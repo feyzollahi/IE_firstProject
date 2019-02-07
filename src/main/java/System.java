@@ -11,7 +11,6 @@ public class System {
     public static void print(Object object){java.lang.System.out.println(object);}
     private static System singleInstance = null;
     private System () {
-//        users  = new ArrayList<User>();
         users = new HashMap<String, User>();
         projects = new HashMap<String, Project>();
         bids = new HashMap<String, Bid>();
