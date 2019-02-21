@@ -1,0 +1,10 @@
+{"id":1,
+"firstName":"علی",
+"lastName":"شریف زاده",
+"skills":[{"name":"HTML","endorsedCount":5}
+,{"name": "Javascript", "endorsedCount":4}
+,{"name": "C++", "endorsedCount":2}
+,{"name": "Java", "endorsedCount":3} ],
+"jobTitle" : "برنامه نویس وب",
+"bio": "روی سنگ قبرم بنویسید:خدابیامرز می خواست خیلی کارکنه ولی پول نداشت"
+}
